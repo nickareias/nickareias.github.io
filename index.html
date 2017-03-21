@@ -3,7 +3,8 @@
 <head>
         <meta charset="utf-8" />
         <title>Nick's Blog</title>
-        <link rel="stylesheet" href="/theme/css/main.css" />
+        <link rel="stylesheet" href="./theme/css/main.css" />
+        <link href="nickareias.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Nick's Blog Atom Feed" />
 
         <!--[if IE]>
             <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -12,25 +13,26 @@
 
 <body id="index" class="home">
         <header id="banner" class="body">
-                <h1><a href="/">Nick's Blog </a></h1>
+                <h1><a href="./">Nick's Blog </a></h1>
                 <nav><ul>
-                    <li><a href="/category/posts.html">posts</a></li>
+                    <li><a href="./category/clustering.html">clustering</a></li>
+                    <li><a href="./category/posts.html">posts</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="/first-post.html">First Post</a></h1>
+                    <h1 class="entry-title"><a href="./clustering-car-eval.html">Comparing Clustering on a Labelled Dataset</a></h1>
 <footer class="post-info">
-        <abbr class="published" title="2017-03-20T01:51:00-07:00">
-                Published: Mon 20 March 2017
+        <abbr class="published" title="2017-03-21T00:53:00-07:00">
+                Published: Tue 21 March 2017
         </abbr>
 
         <address class="vcard author">
-                By                         <a class="url fn" href="/author/nick-areias.html">Nick Areias</a>
+                By                         <a class="url fn" href="./author/nick-areias.html">Nick Areias</a>
         </address>
-<p>In <a href="/category/posts.html">posts</a>.</p>
-<p>tags: <a href="/tag/python-firsts-blog.html">python firsts blog</a> </p>
+<p>In <a href="./category/clustering.html">clustering</a>.</p>
+<p>tags: <a href="./tag/python-clustering-sklearn.html">python clustering sklearn</a> </p>
 </footer><!-- /.post-info --><style type="text/css">/*!
 *
 * IPython notebook
@@ -1008,316 +1010,2824 @@ h6:hover .anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="First-Post">First Post<a class="anchor-link" href="#First-Post">¶</a></h1><p>This is my first blog post.  This blog is where I will share my data science and machine learning projects.  I hope you enjoy!</p>
-<p>Here's a graph of some random data.</p>
+<h1 id="Clustering">Clustering<a class="anchor-link" href="#Clustering">¶</a></h1><p>We are going to look at a dataset of car acceptability.  This dataset consists of 6 attributes that describe a car, and a class describing wether or not the car is acceptable.  We will try to cluster this dataset into 4 clusters without looking at class (acc).  We will then compare the clustering to the pre-existing class values and see if they match up.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [6]:</div>
+<div class="prompt input_prompt">In [59]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="n">size</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="n">size</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"http://archive.ics.uci.edu/ml/machine-learning-databases/car/car.data"</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s2">"price"</span><span class="p">,</span><span class="s2">"maint"</span><span class="p">,</span><span class="s2">"doors"</span><span class="p">,</span><span class="s2">"ppl"</span><span class="p">,</span><span class="s2">"lug"</span><span class="p">,</span><span class="s2">"safe"</span><span class="p">,</span><span class="s2">"acc"</span><span class="p">))</span>
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="output_area"><div class="prompt output_prompt">Out[6]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[59]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>price</th>
+<th>maint</th>
+<th>doors</th>
+<th>ppl</th>
+<th>lug</th>
+<th>safe</th>
+<th>acc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+</tr>
+<tr>
+<th>1</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+</tr>
+<tr>
+<th>2</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+</tr>
+<tr>
+<th>3</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+</tr>
+<tr>
+<th>4</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>First we will create another dataframe that contains everything from the dataset except the class column.  We do this so we can encode the dataset with dummy variables.  Categorical data is not usefull for machine learning algorithms so we must change it to numerical data.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [60]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_noclass</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s2">"price"</span><span class="p">,</span><span class="s2">"maint"</span><span class="p">,</span><span class="s2">"doors"</span><span class="p">,</span><span class="s2">"ppl"</span><span class="p">,</span><span class="s2">"lug"</span><span class="p">,</span><span class="s2">"safe"</span><span class="p">]]</span>    <span class="c1">#get every attribute except for class (acc)</span>
+<span class="n">data_noclass</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt output_prompt">Out[60]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>price</th>
+<th>maint</th>
+<th>doors</th>
+<th>ppl</th>
+<th>lug</th>
+<th>safe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>low</td>
+</tr>
+<tr>
+<th>1</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>med</td>
+</tr>
+<tr>
+<th>2</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>high</td>
+</tr>
+<tr>
+<th>3</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>low</td>
+</tr>
+<tr>
+<th>4</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>med</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will use one-hot encoding to turn the different values for each attribute into dummy variables.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [61]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">onehot_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data_noclass</span><span class="p">)</span>
+<span class="n">onehot_data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt output_prompt">Out[61]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>price_high</th>
+<th>price_low</th>
+<th>price_med</th>
+<th>price_vhigh</th>
+<th>maint_high</th>
+<th>maint_low</th>
+<th>maint_med</th>
+<th>maint_vhigh</th>
+<th>doors_2</th>
+<th>doors_3</th>
+<th>...</th>
+<th>doors_5more</th>
+<th>ppl_2</th>
+<th>ppl_4</th>
+<th>ppl_more</th>
+<th>lug_big</th>
+<th>lug_med</th>
+<th>lug_small</th>
+<th>safe_high</th>
+<th>safe_low</th>
+<th>safe_med</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>...</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<th>1</th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>...</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<th>2</th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>...</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<th>3</th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>...</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<th>4</th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>...</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>5 rows × 21 columns</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Lets load sklearn library for KMeans clustering and see how this dataset is clustered.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [62]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Import the kmeans clustering model.</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">KMeans</span>
+
+<span class="c1"># Initialize the model with 2 parameters -- number of clusters and random state.</span>
+<span class="n">kmeans_model</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Fit the model using the good columns.</span>
+<span class="n">kmeans_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">onehot_data</span><span class="p">)</span>
+<span class="c1"># Get the cluster assignments.</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">kmeans_model</span><span class="o">.</span><span class="n">labels_</span>
+
+<span class="n">labels</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt output_prompt">Out[62]:</div>
 <div class="output_text output_subarea output_execute_result">
-<pre>[<matplotlib.lines.line2d at 0x26c93b6dcc0>]</pre>
+<pre>array([0, 0, 0, ..., 1, 1, 1])</pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We have our labels, now we want to compare them to the existing classes to see how close our clusters are.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [63]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span>
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt output_prompt">Out[63]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>price</th>
+<th>maint</th>
+<th>doors</th>
+<th>ppl</th>
+<th>lug</th>
+<th>safe</th>
+<th>acc</th>
+<th>cluster</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>1</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>2</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>3</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>3</td>
+</tr>
+<tr>
+<th>4</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>3</td>
+</tr>
+<tr>
+<th>5</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>high</td>
+<td>unacc</td>
+<td>3</td>
+</tr>
+<tr>
+<th>6</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>7</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>big</td>
+<td>med</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>8</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>big</td>
+<td>high</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>9</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>10</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>11</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>12</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>13</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>14</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>med</td>
+<td>high</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>15</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>16</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>big</td>
+<td>med</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>17</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>big</td>
+<td>high</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>18</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>19</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>20</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>21</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>22</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>23</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>med</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>24</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>25</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>26</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>27</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>28</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>29</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>30</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>3</td>
+</tr>
+<tr>
+<th>31</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>3</td>
+</tr>
+<tr>
+<th>32</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>med</td>
+<td>high</td>
+<td>unacc</td>
+<td>3</td>
+</tr>
+<tr>
+<th>33</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>34</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>big</td>
+<td>med</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>35</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>big</td>
+<td>high</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>36</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>4</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>37</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>4</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>38</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>4</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>39</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>4</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>40</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>4</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>41</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>4</td>
+<td>med</td>
+<td>high</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>42</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>4</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>43</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>4</td>
+<td>big</td>
+<td>med</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>44</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>4</td>
+<td>big</td>
+<td>high</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>45</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>46</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>47</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>48</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>49</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Our clustering is not very accurate, it is clustering the cars into different groups than the classes suggest.  Lets look at the distribution of classes to see if we can figure out why this is happening.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [64]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">classes</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span>
+<span class="n">classes</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt output_prompt">Out[64]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>unacc    1210
+acc       384
+good       69
+vgood      65
+Name: acc, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The classes in the dataset aren't evenly represented. Lets look at the cars that are classed as 'vgood' and 'good' and see what type of clusters they're put into.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [74]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"vgood clusters"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'vgood'</span><span class="p">][</span><span class="s1">'cluster'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>  <span class="c1">#get the frequency of each value in the 'cluster' attribute</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">good clusters"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'good'</span><span class="p">][</span><span class="s1">'cluster'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>  <span class="c1">#get the frequency of each value in the 'cluster' attribute</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
 <div class="output_area"><div class="prompt"></div>
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhcAAAFkCAYAAACThxm6AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
-AAAPYQAAD2EBqD+naQAAIABJREFUeJzt3Xu81WP6//HX1QklITogISGMKCSh9orBjPOh2g5jhmFM
-xiHjMAfGab6MY5hxGjODGWYlZDCDxopKlFLOI6c0DEpEUUq1798f196/tq1d+7A+6/6std7Px2M9
-dnvtz+ezrru191rXug/XbSEERERERPKlRewAREREpLQouRAREZG8UnIhIiIieaXkQkRERPJKyYWI
-iIjklZILERERySslFyIiIpJXSi5EREQkr5RciIiISF4puRAREZG8SjS5MLO9zexhM/vAzKrM7JA1
-HD+w+rjatxVm1inJOEVERCR/ku65aAe8CAwHGrqJSQB6Al2qb11DCB8nE56IiIjkW6skLx5CeBx4
-HMDMrBGnzgshLEwmKhEREUlSGudcGPCimX1oZv82sz1jByQiIiINl2jPRRN8BPwEeB5YCzgZGG9m
-u4cQXlzVCWbWEdgfmA0sKVCcIiIipWBtYAtgbAjh03xdNFXJRQjhTeDNWndNMbMewAjghHpO2x+4
-J+nYREREStixwN/zdbFUJRf1mAoMWM3PZwPcfffd9OrVqyABJW3EiBGMHDkydhh5U0rtKaW2gNqT
-ZqXUFlB70ur111/nuOOOg+r30nwphuRiZ3y4pD5LAHr16kWfPn0KE1HCOnToUDJtgdJqTym1BdSe
-NCultoDaUwTyOq0g0eTCzNoBW+OTNAG2MrPewPwQwvtmdgWwSQjhhOrjzwTeBV7Dx4FOBiqA/ZKM
-U0RERPIn6Z6LXYGn8NoVAbi2+v67gBPxOhbdah3fpvqYTYDFwMvA4BDCxITjFBERkTxJus7FBFaz
-3DWE8KM6318NXJ1kTCIiIpKsNNa5KHuVlZWxQ8irUmpPKbUF1J40K6W2gNpTbiyEhlblTicz6wNM
-nz59eqlNrhEREUnUjBkz6Nu3L0DfEMKMfF1XPRciIiKSV0ouREREJK+UXIiIiEheKbkQERGRvFJy
-ISIiInml5EJERETySsmFiIiI5JWSCxEREckrJRciIiKSV0ouREREJK+UXIiIiEheKbkQERGRvFJy
-ISIiInml5EJEJCXeeQeuvhr22AO22QaWLYsdkUjTtIodgIhIuQoB/vMfGDMGHngAXnoJ1l7bk4u3
-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
-aTV1qq8U0SqR8tW/vyeWWpKaLsuXe49S2pag1ki8QmcI4eYQwhYhhHVCCP1DCM/X+tmPQgiZOsdP
-DCH0rT6+Zwjhb0nHWNfVV/sf05lnFvqRZVWmTvU/oH339cm3Tz7pSz133TV2ZE3TsiVcc433kv3x
-jz6kk9ScqubKZn0Cas1GVlJ+1lkH9txTyUXaTJ/urxtlm1wUow03hBtu8KWMjzwSO5ry9dprXkG1
-Xz8vFPOPf8DkyT4GXApOPtl3GJ061V+83303dkTftGKFb+w2ZEh6dlqUODIZGD8+3b1s5SaXg/bt
-YbfVbqgRj5KLegwdCgceCMOHwxdfxI6mvMye7fMpdtoJXnwR/vpXL9996KHpKm+bD4MHe8K0dKkn
-Uc/WN9U5ggkTPKnTkIhUVHjZ/BdeiB2J1Mjl/HlpldKCEkou6mEGN9/sRZkuuCB2NOVh7lw44wxf
-T//44z7h8Y03vMplKX9y3m47Lxm+3Xb+CfHvf48dkctmYcstPemR8rbbbl7jRPuMpMOiRf5BJK1D
-IqDkYrW22AIuu8z3H5k6NXY0pevzzz2B69HDeykuucR3FT3tNK90WQ422gieeMLLkx97rBdyi7mS
-5OuvfbfgYcNKr7dIGq9NG1/uqHkX6TBpkv+NKrkoYmec4ZU7f/xjWLYsdjSlZfFiuOoq2GoruO46
-35323Xfhl78sz0qQa60Fd9wBl18Ol17qG64tWRInlrFjfadgDYlIjUzGl1J//XXsSCSXg0028d7O
-tFJysQatWsHtt/umV9deGzua0rBsmW8ktvXWXrisstJ7Kq64Qjtumnlydd99PoG1osKHiwotm4Ud
-dvB6IiLgv4uLF6sXNw3SuMV6XUouGmCXXbwuwSWX+CZY0jRVVT6foFcvnyg7eLDPqbjpJujaNXZ0
-6XLUUTBxok9u7dfPC4UVyqJFvgeKei2ktl128b16NDQS17x5PtE9zUMioOSiwS6+2Nf7n3pq+qsq
-pk0I8M9/+ovTscf6J+KXXoK//c2HRGTVdtvNPyWuv74vVX388cI87iOP+CfUYcMK83hSHFq29Hon
-mtQZV01yN7juRhkpo+Sigdq18678ceP8TVEa5umnfSLYwQd7/ZBnn/VPxepub5hu3fz/cOBAL7b1
-hz8k/5jZLOy+u0+wFaktk/G/4a++ih1J+Ro3Drbf3udcpJmSi0bYf3//5H322d41JfVbuhTOOgv2
-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
-AABJRU5ErkJggg==
-">
-</img></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>vgood clusters
+1    35
+2    30
+Name: cluster, dtype: int64
+
+good clusters
+2    36
+1    33
+Name: cluster, dtype: int64
+</pre>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>All of the cars under the 'vgood' and 'good' class are being put into clusters 1 and 2.  This is some good news, maybe our clustering algorithm is doing something right, at least there are only two clusters in these two groups.  Lets look at the other two groups with more elements to see what their clustering looks like.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [75]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"acc clusters"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'acc'</span><span class="p">][</span><span class="s1">'cluster'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>  <span class="c1">#get the frequency of each value in the 'cluster' attribute</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">unacc clusters"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'unacc'</span><span class="p">][</span><span class="s1">'cluster'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>  <span class="c1">#get the frequency of each value in the 'cluster' attribute</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>acc clusters
+2    198
+1    186
+Name: cluster, dtype: int64
+
+unacc clusters
+0    384
+1    322
+2    312
+3    192
+Name: cluster, dtype: int64
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>This isn't good news, we were hoping to see different clusters than we got from 'vgood' and 'good.  It's likely that the clustering algorithm is finding different correlations in the data that aren't in line with the class.  Lets look at all the '1' clusters since they are represented in every class.  Maybe we can find something to explain why the clusters are different than the class.
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [79]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cluster_1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>   <span class="c1">#get only the datapoints with cluster value of 1</span>
+<span class="n">cluster_1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt output_prompt">Out[79]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>price</th>
+<th>maint</th>
+<th>doors</th>
+<th>ppl</th>
+<th>lug</th>
+<th>safe</th>
+<th>acc</th>
+<th>cluster</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>18</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>19</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>20</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>21</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>22</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>23</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>med</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>24</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>25</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>26</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>45</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>46</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>47</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>48</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>49</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>50</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>med</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>51</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>52</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>big</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>53</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>more</td>
+<td>big</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>72</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>4</td>
+<td>more</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>73</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>4</td>
+<td>more</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>74</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>4</td>
+<td>more</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>75</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>4</td>
+<td>more</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>76</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>4</td>
+<td>more</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>77</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>4</td>
+<td>more</td>
+<td>med</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>78</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>4</td>
+<td>more</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>79</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>4</td>
+<td>more</td>
+<td>big</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>80</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>4</td>
+<td>more</td>
+<td>big</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>99</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>5more</td>
+<td>more</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>100</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>5more</td>
+<td>more</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>101</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>5more</td>
+<td>more</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>1644</th>
+<td>low</td>
+<td>low</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1645</th>
+<td>low</td>
+<td>low</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>med</td>
+<td>good</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1646</th>
+<td>low</td>
+<td>low</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>high</td>
+<td>vgood</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1665</th>
+<td>low</td>
+<td>low</td>
+<td>3</td>
+<td>more</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1666</th>
+<td>low</td>
+<td>low</td>
+<td>3</td>
+<td>more</td>
+<td>small</td>
+<td>med</td>
+<td>acc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1667</th>
+<td>low</td>
+<td>low</td>
+<td>3</td>
+<td>more</td>
+<td>small</td>
+<td>high</td>
+<td>good</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1668</th>
+<td>low</td>
+<td>low</td>
+<td>3</td>
+<td>more</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1669</th>
+<td>low</td>
+<td>low</td>
+<td>3</td>
+<td>more</td>
+<td>med</td>
+<td>med</td>
+<td>good</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1670</th>
+<td>low</td>
+<td>low</td>
+<td>3</td>
+<td>more</td>
+<td>med</td>
+<td>high</td>
+<td>vgood</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1671</th>
+<td>low</td>
+<td>low</td>
+<td>3</td>
+<td>more</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1672</th>
+<td>low</td>
+<td>low</td>
+<td>3</td>
+<td>more</td>
+<td>big</td>
+<td>med</td>
+<td>good</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1673</th>
+<td>low</td>
+<td>low</td>
+<td>3</td>
+<td>more</td>
+<td>big</td>
+<td>high</td>
+<td>vgood</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1692</th>
+<td>low</td>
+<td>low</td>
+<td>4</td>
+<td>more</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1693</th>
+<td>low</td>
+<td>low</td>
+<td>4</td>
+<td>more</td>
+<td>small</td>
+<td>med</td>
+<td>acc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1694</th>
+<td>low</td>
+<td>low</td>
+<td>4</td>
+<td>more</td>
+<td>small</td>
+<td>high</td>
+<td>good</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1695</th>
+<td>low</td>
+<td>low</td>
+<td>4</td>
+<td>more</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1696</th>
+<td>low</td>
+<td>low</td>
+<td>4</td>
+<td>more</td>
+<td>med</td>
+<td>med</td>
+<td>good</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1697</th>
+<td>low</td>
+<td>low</td>
+<td>4</td>
+<td>more</td>
+<td>med</td>
+<td>high</td>
+<td>vgood</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1698</th>
+<td>low</td>
+<td>low</td>
+<td>4</td>
+<td>more</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1699</th>
+<td>low</td>
+<td>low</td>
+<td>4</td>
+<td>more</td>
+<td>big</td>
+<td>med</td>
+<td>good</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1700</th>
+<td>low</td>
+<td>low</td>
+<td>4</td>
+<td>more</td>
+<td>big</td>
+<td>high</td>
+<td>vgood</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1719</th>
+<td>low</td>
+<td>low</td>
+<td>5more</td>
+<td>more</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1720</th>
+<td>low</td>
+<td>low</td>
+<td>5more</td>
+<td>more</td>
+<td>small</td>
+<td>med</td>
+<td>acc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1721</th>
+<td>low</td>
+<td>low</td>
+<td>5more</td>
+<td>more</td>
+<td>small</td>
+<td>high</td>
+<td>good</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1722</th>
+<td>low</td>
+<td>low</td>
+<td>5more</td>
+<td>more</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1723</th>
+<td>low</td>
+<td>low</td>
+<td>5more</td>
+<td>more</td>
+<td>med</td>
+<td>med</td>
+<td>good</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1724</th>
+<td>low</td>
+<td>low</td>
+<td>5more</td>
+<td>more</td>
+<td>med</td>
+<td>high</td>
+<td>vgood</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1725</th>
+<td>low</td>
+<td>low</td>
+<td>5more</td>
+<td>more</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1726</th>
+<td>low</td>
+<td>low</td>
+<td>5more</td>
+<td>more</td>
+<td>big</td>
+<td>med</td>
+<td>good</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1727</th>
+<td>low</td>
+<td>low</td>
+<td>5more</td>
+<td>more</td>
+<td>big</td>
+<td>high</td>
+<td>vgood</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>576 rows × 8 columns</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>My first observation is that every element of the ppl attribute is "more" so lets try looking at the value counts for the ppl attribute.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [84]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Number of passengers, Cluster 1: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_1</span><span class="p">[</span><span class="s1">'ppl'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Number of passengers, all Data: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'ppl'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Number of passengers, Cluster 1: 
+more    576
+Name: ppl, dtype: int64
+
+Number of passengers, all Data: 
+more    576
+4       576
+2       576
+Name: ppl, dtype: int64
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The number of passengers is "more" for all of cluster 1, so this could be a big factor for the clustering.  Lets look at some of the other clusters to see if they have a similar trend.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [86]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cluster_2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">cluster_3</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">cluster_0</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Number of passengers, Cluster 2: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_2</span><span class="p">[</span><span class="s1">'ppl'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Number of passengers, Cluster 3: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_3</span><span class="p">[</span><span class="s1">'ppl'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Number of passengers, Cluster 0: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_0</span><span class="p">[</span><span class="s1">'ppl'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Number of passengers, Cluster 2: 
+4    576
+Name: ppl, dtype: int64
+
+Number of passengers, Cluster 3: 
+2    192
+Name: ppl, dtype: int64
+
+Number of passengers, Cluster 0: 
+2    384
+Name: ppl, dtype: int64
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It seems like our hypothesis was correct, the clustering algorithm grouped the cars primarily by number of passengers.  It is likely that the only reason there are '2' passengers in cluster 3 and 0 is that it had to split it 4 times, but there are only 3 valus for number of passengers.  This could be because the distribution of the number of passengers was so even between the values.  Lets look at the distribution of values in the other attributes to see if they are also evenly distributed.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [87]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Buying Price: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'price'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of values</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Maintanance Price: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'maint'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of values</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Number of doors: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'doors'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of values</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Luggage room: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'lug'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of values</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Safety: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'safe'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of values</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Buying Price: 
+vhigh    432
+low      432
+high     432
+med      432
+Name: price, dtype: int64
+
+Maintanance Price: 
+vhigh    432
+low      432
+high     432
+med      432
+Name: maint, dtype: int64
+
+Number of doors: 
+4        432
+2        432
+5more    432
+3        432
+Name: doors, dtype: int64
+
+Luggage room: 
+small    576
+med      576
+big      576
+Name: lug, dtype: int64
+
+Safety: 
+low     576
+high    576
+med     576
+Name: safe, dtype: int64
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>All of the attributes have even represented, so its interesting that the clustering algorithm decided to cluster based primarily on the number of passengers.  Lets try running the clustering algorithm again with a different random seed and see if it does the same thing.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [89]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Import the kmeans clustering model.</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">KMeans</span>
+
+<span class="c1"># Initialize the model with 2 parameters -- number of clusters and random state.</span>
+<span class="n">kmeans_model</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+
+<span class="c1"># Fit the model using the good columns.</span>
+<span class="n">kmeans_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">onehot_data</span><span class="p">)</span>
+
+<span class="c1"># Get the cluster assignments.</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">kmeans_model</span><span class="o">.</span><span class="n">labels_</span>
+
+<span class="c1">#reset the cluster column of the data</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span>
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt output_prompt">Out[89]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>price</th>
+<th>maint</th>
+<th>doors</th>
+<th>ppl</th>
+<th>lug</th>
+<th>safe</th>
+<th>acc</th>
+<th>cluster</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>2</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>3</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>4</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>5</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>high</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>6</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>7</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>big</td>
+<td>med</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>8</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>big</td>
+<td>high</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>9</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>3</td>
+</tr>
+<tr>
+<th>10</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>3</td>
+</tr>
+<tr>
+<th>11</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>3</td>
+</tr>
+<tr>
+<th>12</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>13</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>14</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>med</td>
+<td>high</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>15</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>16</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>big</td>
+<td>med</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>17</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>4</td>
+<td>big</td>
+<td>high</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>18</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>19</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>20</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>21</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>22</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>23</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>med</td>
+<td>high</td>
+<td>unacc</td>
+<td>2</td>
+</tr>
+<tr>
+<th>24</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>low</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>25</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>med</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>26</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>more</td>
+<td>big</td>
+<td>high</td>
+<td>unacc</td>
+<td>0</td>
+</tr>
+<tr>
+<th>27</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>28</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+<tr>
+<th>29</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>3</td>
+<td>2</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From looking at this run of the clustering algorithm it seems that the luggage is the deciding factor for how the set is clustered.  Lets look at the luggage size value counts for each cluster.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [90]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cluster_0</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">cluster_1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">cluster_2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">cluster_3</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Luggage Space, Cluster 0: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_0</span><span class="p">[</span><span class="s1">'lug'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Luggage Space, Cluster 1: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_1</span><span class="p">[</span><span class="s1">'lug'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Luggage Space, Cluster 2: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_2</span><span class="p">[</span><span class="s1">'lug'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Luggage Space, Cluster 3: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_3</span><span class="p">[</span><span class="s1">'lug'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Luggage Space, Cluster 0: 
+big    576
+Name: lug, dtype: int64
+
+Luggage Space, Cluster 1: 
+small    384
+Name: lug, dtype: int64
+
+Luggage Space, Cluster 2: 
+med    576
+Name: lug, dtype: int64
+
+Luggage Space, Cluster 3: 
+small    192
+Name: lug, dtype: int64
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We were right, the clusters are being decided by luggage space now.  Since each attribute has such an even representation, the clustering algorithm is just picking one to focus on based on random chance.  Its likely due to the even distribution of each attribute.  That is very unnatural for a real dataset to have, for each attribute to have the same number of each value.</p>
+<p>Lets try running this dataset through some predictors to see if we can accurately predict the class.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [132]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">onehot_data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1">#add class onto onehot encoded attributes</span>
+
+<span class="n">onehot_data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span> <span class="o">=</span> <span class="n">onehot_data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'category'</span><span class="p">)</span>  <span class="c1">#change to category datatype</span>
+<span class="n">onehot_data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span> <span class="o">=</span> <span class="n">onehot_data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span>  <span class="c1">#change to int code</span>
+
+<span class="c1"># Generate the training set.  Set random_state to be able to replicate results.</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">onehot_data</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># Select anything not in the training set and put it in the testing set.</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">onehot_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">onehot_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">index</span><span class="p">)]</span>
+
+<span class="c1"># Get all the columns from the dataframe.</span>
+<span class="n">columns</span> <span class="o">=</span> <span class="n">onehot_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="c1"># Filter the columns to remove ones we don't want.</span>
+<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"acc"</span><span class="p">]]</span>
+
+<span class="c1"># Store the variable we'll be predicting on.</span>
+<span class="n">target</span> <span class="o">=</span> <span class="s2">"acc"</span>
+
+
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span>
+
+<span class="c1"># Initialize the model with some parameters.</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">min_samples_leaf</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># Fit the model to the data.</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">columns</span><span class="p">],</span> <span class="n">train</span><span class="p">[</span><span class="n">target</span><span class="p">])</span>
+<span class="c1"># Make predictions.</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="n">columns</span><span class="p">])</span>
+
+<span class="c1">#add the prediction column onto the test data to compare with actual class</span>
+<span class="n">test</span><span class="p">[</span><span class="s1">'prediction'</span><span class="p">]</span> <span class="o">=</span> <span class="n">predictions</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\Users\Asus\Anaconda3\lib\site-packages\ipykernel\__main__.py:30: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We changed the class to a categorical variable and then encoded it as an integer from [0,3].  Then we split the data into training and test data using random sampling.  Then we gathered all the columns that weren't the class.  We imported sklearn RandomForestClassifier and fit a model with our training data.  Then we used that model to predict our test data without the class in it.  Finally, we added on a column to the end of test data to represent the predictions.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [134]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#calculate percentage of correct classifications</span>
+<span class="n">num_correct</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">],</span><span class="n">test</span><span class="p">[</span><span class="s1">'prediction'</span><span class="p">]):</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="n">p</span><span class="p">):</span>
+        <span class="n">num_correct</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+<span class="n">percent_correct</span> <span class="o">=</span> <span class="n">num_correct</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Percent Classified Correctly: </span><span class="si">%.2f%%</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">percent_correct</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Percent Classified Correctly: 100.00%
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We compared the predicted class with the actual class and we got 100% accuracy.  That is good news for this dataset, it seems that the data really is representative of the class.  Our k-means clustering didn't show this, so maybe k-means clustering isn't the right clustering algorithm to use.  This is likely because k-means is a linear clustering algorithm, and our classes are defined in a non-linear fashion.  Lets use a different clustering algorithm and see if we get better results.  Our classes are clearly well defined since we got 100% accuracy, we must be able to find a clustering algorithm that can match this.</p>
+<p>Lets try DBSCAN from the sklearn library which should be good at picking up non-linear clusters.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [138]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#remake onehot_data for clustering</span>
+<span class="n">onehot_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data_noclass</span><span class="p">)</span>
+
+<span class="c1">#import DBSCAN from sklearn</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">DBSCAN</span>
+
+<span class="c1">#create the model with some arbitrary values to start</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">DBSCAN</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">min_samples</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1">#fit the model and get clusters</span>
+<span class="n">clusters</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">onehot_data</span><span class="p">)</span>
+
+<span class="c1">#set cluster column of data</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">=</span> <span class="n">clusters</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt output_prompt">Out[138]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>price</th>
+<th>maint</th>
+<th>doors</th>
+<th>ppl</th>
+<th>lug</th>
+<th>safe</th>
+<th>acc</th>
+<th>cluster</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>low</td>
+<td>unacc</td>
+<td>-1</td>
+</tr>
+<tr>
+<th>1</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>med</td>
+<td>unacc</td>
+<td>-1</td>
+</tr>
+<tr>
+<th>2</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>small</td>
+<td>high</td>
+<td>unacc</td>
+<td>-1</td>
+</tr>
+<tr>
+<th>3</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>low</td>
+<td>unacc</td>
+<td>-1</td>
+</tr>
+<tr>
+<th>4</th>
+<td>vhigh</td>
+<td>vhigh</td>
+<td>2</td>
+<td>2</td>
+<td>med</td>
+<td>med</td>
+<td>unacc</td>
+<td>-1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [139]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt output_prompt">Out[139]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>-1    1728
+Name: cluster, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It seems that our clustering algorithm didn't work.  After trying many different combinations of parameters, (lower min_samples and higher eps should lead to more clusters) I could only ever get 1 cluster, which is useless.  This algorithm must be ill suited for a dataset like this with all categorical data.</p>
+<p>I'm starting to think that there isn't a way to cluster this dataset to match the classes.  There is a good chance that the classes are spread out in separate areas of the space.  If this is the case, then there would be no way for an unsupervised learning algorithm to know that these separate areas could be linked as one cluster.</p>
+<p>We'll try one more clustering algorithm just to see if we can get some results. We'll try agglomerative clustering which is also good for non-linear clusters.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [166]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">AgglomerativeClustering</span>
+
+<span class="c1">#create the model with 4 clusters</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">AgglomerativeClustering</span><span class="p">(</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="c1">#fit the model and get clusters</span>
+<span class="n">clusters</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">onehot_data</span><span class="p">)</span>
+
+<span class="c1">#set cluster column of data</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">=</span> <span class="n">clusters</span>
+
+<span class="c1">#get clusters and frequency of each</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0    675
+3    351
+2    351
+1    351
+Name: cluster, dtype: int64
+unacc    1210
+acc       384
+good       69
+vgood      65
+Name: acc, dtype: int64
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This clustering method did not work as we hoped, it didn't come close to the same distribution of classes that we have in the labelled data.  Lets look at the clusters to see which classes are represented in each.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [164]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cluster_0</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">cluster_1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">cluster_2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">cluster_3</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">'cluster'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Classes, Cluster 0: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_0</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Classes, Cluster 1: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_1</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Classes, Cluster 2: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_2</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Classes, Cluster 3: "</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cluster_3</span><span class="p">[</span><span class="s1">'acc'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>   <span class="c1">#get the frequency of each value in the 'ppl' attribute</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Classes, Cluster 0: 
+unacc    545
+acc      130
+Name: acc, dtype: int64
+
+Classes, Cluster 1: 
+unacc    216
+acc       86
+vgood     26
+good      23
+Name: acc, dtype: int64
+
+Classes, Cluster 2: 
+unacc    243
+acc      108
+Name: acc, dtype: int64
+
+Classes, Cluster 3: 
+unacc    206
+acc       60
+good      46
+vgood     39
+Name: acc, dtype: int64
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is nowhere near a match for the classes.  But the more I explore this dataset trying to cluster it, the more I think it isn't suited to clustering.  Even though I haven't gained much information about the dataset, I still feel like I've learned something about it.</p>
+<p>For my next clustering project I will definitely choose a dataset with continuous variables so that we can get some better results.</p>
 </div>
 </div>
 </div>
@@ -1362,6 +3872,46 @@ AABJRU5ErkJggg==
 </script>
                 </article>
             </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                    <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="./first-post.html" rel="bookmark"
+                           title="Permalink to First Post">First Post</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2017-03-20T01:51:00-07:00">
+                Published: Mon 20 March 2017
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="./author/nick-areias.html">Nick Areias</a>
+        </address>
+<p>In <a href="./category/posts.html">posts</a>.</p>
+<p>tags: <a href="./tag/python-firsts-blog.html">python firsts blog</a> </p>
+</footer><!-- /.post-info -->                
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="First-Post">First Post<a class="anchor-link" href="#First-Post">¶</a></h1><p>This is my first blog post.  This blog is where I will share my data science and machine learning projects.  I hope you enjoy!</p>
+<p>Here's a graph of some random data.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+                <a class="readmore" href="./first-post.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+                </ol><!-- /#posts-list -->
+                </section><!-- /#content -->
         <section id="extras" class="body">
                 <div class="blogroll">
                         <h2>blogroll</h2>
@@ -1375,6 +3925,7 @@ AABJRU5ErkJggg==
                 <div class="social">
                         <h2>social</h2>
                         <ul>
+                            <li><a href="nickareias.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
 
                             <li><a href="#">You can add links in your config file</a></li>
                             <li><a href="#">Another social link</a></li>
