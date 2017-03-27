@@ -1,7 +1,7 @@
 Title: Comparing Clustering on a Labelled Dataset
 Slug: clustering-car-eval
 Date: 2017-03-21 00:53
-Category: clustering
+Category: Clustering
 Tags: python clustering sklearn
 Author: Nick Areias
 Summary: We attempt to cluster a labelled dataset and compare our clusters to the existing classes.
