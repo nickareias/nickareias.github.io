@@ -1,0 +1,7 @@
+Title: Predicting Titanic Survivors
+Slug: titanic-survivors
+Date: 2017-04-5 23:10
+Category: Classification
+Tags: python classification sklearn random-forest
+Author: Nick Areias
+Summary: We train a random forest to predict whether a given passenger from the titanic would survive.
